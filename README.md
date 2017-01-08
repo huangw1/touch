@@ -3,7 +3,7 @@
 
 具体使用，可查看demo演示。
 
-#目前支持哪些事件：
+##目前支持哪些事件：
  * tap：轻击
  * doubleTap：双击
  * longTap：长按
@@ -15,14 +15,14 @@
  * scale：缩放
  * scale：旋转
 
- #DEMO
- 请使用移动设备或使用调试工具模拟移动设备查看。
+##DEMO
+请使用移动设备或使用调试工具模拟移动设备查看。
 
- touch.html：基本事件
+touch.html：基本事件
 
- slide.html：轮播实例
+slide.html：轮播实例
 
- #如何使用
+##如何使用
 
 ```javascript
 
