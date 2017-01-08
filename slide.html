@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>轮播</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <style type="text/css">
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    
+    .header {
+        padding: 12px;
+    }
+    
+    .header-profile {
+        float: left;
+    }
+    
+    .header-profile img {
+        border-radius: 100%;
+    }
+    
+    .header-body {
+        padding: 0 64px;
+    }
+    
+    .user-name {
+        line-height: 30px;
+        font-size: 18px;
+        color: #000;
+    }
+    
+    .time {
+        line-height: 15px;
+        font-size: 13px;
+        color: #aaa;
+    }
+    
+    .touch {
+        vertical-align: top;
+        padding: 12px;
+    }
+    
+    .touch .item {
+        vertical-align: top;
+        float: left;
+        width: 50%;
+        height: 118px;
+        overflow: hidden;
+    }
+    
+    .touch .item img {
+        width: 100%;
+    }
+    
+    .swipe {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: #000;
+        overflow: hidden;
+    }
+    
+    .swipe-container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+    .swipe-list {
+        height: 100%;
+    }
+    .swipe-list .swiper-item {
+        height: 100%;
+        float: left;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    @-webkit-keyframes out {
+        from {
+            -webkit-transform: scale3d(1, 1, 1);
+            transform: scale3d(1, 1, 1);
+        }
+        20% {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+            -webkit-transform: scale3d(0.6, 0.6, 0.6);
+            transform: scale3d(0.6, 0.6, 0.6);
+        }
+    }
+    
+    @keyframes out {
+        from {
+            -webkit-transform: scale3d(1, 1, 1);
+            transform: scale3d(1, 1, 1);
+        }
+        20% {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+            -webkit-transform: scale3d(0.6, 0.6, 0.6);
+            transform: scale3d(0.6, 0.6, 0.6);
+        }
+    }
+    
+    @-webkit-keyframes in {
+        from {
+            opacity: 0;
+            -webkit-transform: scale3d(0.6, 0.6, 0.6);
+            transform: scale3d(0.6, 0.6, 0.6);
+        }
+        50% {
+            opacity: 1;
+        }
+        to {
+            -webkit-transform: scale3d(1, 1, 1);
+            transform: scale3d(1, 1, 1);
+        }
+    }
+    
+    @keyframes in {
+        from {
+            opacity: 0;
+            -webkit-transform: scale3d(0.6, 0.6, 0.6);
+            transform: scale3d(0.6, 0.6, 0.6);
+        }
+        50% {
+            opacity: 1;
+        }
+        to {
+            -webkit-transform: scale3d(1, 1, 1);
+            transform: scale3d(1, 1, 1);
+        }
+    }
+    
+    .zoom-out {
+        -webkit-animation: out 0.2s ease-in-out forwards;
+        animation: out 0.2s ease-in-out forwards;
+    }
+    .zoom-in {
+        -webkit-animation: in 0.2s ease-in-out forwards;
+        animation: in 0.2s ease-in-out forwards;
+    }
+    
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="header-profile">
+            <img src="https://avatars1.githubusercontent.com/u/12822773?v=3&s=50">
+        </div>
+        <div class="header-body">
+            <p class="user-name">手势应用</p>
+            <span class="time">周末 01:30</span>
+        </div>
+    </div>
+    <div class="touch" id="touch">
+        <div class="item"><img index="0" src="./image/thumb-1.jpg"></div>
+        <div class="item"><img index="1" src="./image/thumb-2.jpg"></div>
+    </div>
+    <script type="text/html" id="temp">
+        <div class="swipe zoom-in" id="swipe">
+            <div class="swipe-container">
+                <div class="swipe-list">
+                </div>
+            </div>
+        </div>
+    </script>
+    <script src="touch.js"></script>
+    <script>
+    // utils
+    var Util = {
+            getDomById: function(id, context) {
+                var context = context || document
+                return context.getElementById(id.replace('#', ''))
+            },
+            getDomByClass: function(className, context) {
+                var context = context || document
+                return context.getElementsByClassName(className)
+            },
+            getTempHtml: function(id) {
+                return this.getDomById(id).innerHTML
+            },
+            ceateDoms: function(html) {
+                var node = document.createElement('div')
+                // filter nodeType = 1
+                node.innerHTML = html.replace(/^\s+|\s+$/g,'')
+                return node.firstChild
+            },
+            createElement: function(tagName, props) {
+                var element = document.createElement(tagName),
+                    props = props || {}
+                for(var prop in props) {
+                    if(props[prop]) {
+                        element.setAttribute(prop, props[prop])
+                    }
+                }
+                return element
+            },
+            removeClass: function(node, className) {
+                node.classList.remove(className)
+            },
+            addClass: function(node, className) {
+                node.classList.add(className)
+            },
+            animationEnd: function(node, callback) {
+                node.addEventListener('webkitAnimationEnd', callback)
+                node.addEventListener('animationend', callback)
+            },
+            getNodeWidth: function(node) {
+                return parseInt(node.clientWidth, 10)
+            },
+            setCss: function(node, name, value) {
+                node.style[name] = value
+                if(name == 'transform' || name == 'transition') {
+                    node.style['-webkit-' + name] = value
+                }
+            }
+        }
+        // pics
+    var pic_urls = ['./image/1.jpg', './image/2.jpg']
+
+    // component
+    function Swipe(pic_urls, index) {
+        this.pic_urls = pic_urls || []
+        this.currentIndex = index || 0
+        this.node = Util.ceateDoms(Util.getTempHtml('temp'))
+        this.nodeList = Util.getDomByClass('swipe-list', this.node)[0]
+        this.isSwiped = false
+    }
+    Swipe.prototype = {
+        init: function() {
+            // get body node
+            document.body.appendChild(this.node)
+            // set list
+            var width = this.width = Util.getNodeWidth(this.node)
+            Util.setCss(this.nodeList, 'width', width * this.pic_urls.length + 'px')
+           
+            this.pic_urls.forEach(function(url, index) {
+                this.nodeList.appendChild(Util.createElement('div', {class: 'swiper-item', style: 'background-image: url(' + this.pic_urls[index] + ')' + ';width: ' + width + 'px'}))
+            }.bind(this))
+
+            this.translateToItem(this.currentIndex, 0)
+            this.bindEvent()
+        },
+        translateToItem: function(index ,time) {
+            var translate = index * this.width * -1
+            this.translateTo(translate, time)
+        },
+        translateTo: function(x, time) {
+            this.isSwiped = true
+          
+            Util.setCss(this.nodeList, 'transform', 'translate3d('+ x +'px,0,0)')
+            Util.setCss(this.nodeList, 'transition', time ? time + 's ease-in-out' : '0s ease-in-out')
+            
+
+            Util.animationEnd(this.nodeList, function() {
+                this.isSwiped = false
+            }.bind(this))
+        },
+        bindEvent: function() {
+            var nodeTouch = new Touch('swipe'),
+                direction
+            nodeTouch.on('tap', function() {
+                Util.removeClass(this.node,'zoom-in')
+                Util.addClass(this.node,'zoom-out')
+                Util.animationEnd(this.node, function() {
+                    nodeTouch.disableTouch()
+                    this.destroy()
+                }.bind(this))
+            }.bind(this)).on('swipeLeft', function(e) {
+                var translate = this.currentIndex * this.width * (-1) - e.dx
+                this.translateTo(translate, 0)
+                direction = 'swipeLeft'
+                
+            }.bind(this)).on('swipeRight', function(e) {
+                var translate = this.currentIndex * this.width * (-1) + e.dx
+                this.translateTo(translate, 0)
+                direction = 'swipeRight'
+
+            }.bind(this)).on('swipeEnd', function(e) {
+                // console.log('swipeEnd')
+                switch (direction) {
+                    case 'swipeLeft':
+                        this.currentIndex = this.currentIndex < this.pic_urls.length -1? (this.currentIndex +1): this.currentIndex
+                        this.translateToItem(this.currentIndex, 0.25)
+                        
+                        break;
+                    case 'swipeRight':
+                        this.currentIndex = this.currentIndex > 0? (this.currentIndex -1): this.currentIndex
+                        this.translateToItem(this.currentIndex, 0.25)
+                        
+                        break;
+                }
+            }.bind(this))
+        },
+        destroy: function() {
+            document.body.removeChild(this.node)
+        }
+    }
+
+    // touch
+    var touch = new Touch('touch')
+    touch.on('tap', function(e) {
+        var index = e.target.getAttribute('index')
+        new Swipe(pic_urls, index).init()
+    })
+
+    // load image
+    pic_urls.forEach(function(url) {
+        new Image().src = url
+    })
+    </script>
+</body>
+
+</html>

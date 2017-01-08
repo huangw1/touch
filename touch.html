@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>移动端手势</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <style type="text/css">
+        .touch {
+            text-align: center;
+            color: #fff;
+            height: 142px;
+            background: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="touch" id="touch">
+        
+    </div>
+    <div id="log"></div>
+    <script src="touch.js"></script>
+    <script>
+        var getDom = function(id) {
+            return document.getElementById(id.replace('#', ''))
+        }
+        var logDom = getDom('log')
+        var touch = new Touch('touch')
+        touch.on('start', function() {
+            logDom.innerHTML = ''
+        })
+        touch.on('tap', function() {
+            logDom.innerHTML = logDom.innerHTML + ('<p>tap ' + '</p>')
+        })
+        touch.on('doubleTap', function() {
+            logDom.innerHTML = logDom.innerHTML + ('<p>doubleTap ' + '</p>')
+        })
+        touch.on('swipe', function() {
+            // logDom.innerHTML = logDom.innerHTML + ('<p>swipe ' + '</p>')
+        })
+        touch.on('swipeLeft', function(e) {
+            logDom.innerHTML = logDom.innerHTML + ('<p>swipeLeft: ' + e.dx + '</p>')
+        })
+        touch.on('swipeRight', function(e) {
+            logDom.innerHTML = logDom.innerHTML + ('<p>swipeRight: ' + e.dx + '</p>')
+        })
+        touch.on('swipeUp', function(e) {
+            logDom.innerHTML = logDom.innerHTML + ('<p>swipeUp: ' + e.dy + '</p>')
+        })
+        touch.on('swipeDown', function(e) {
+            logDom.innerHTML = logDom.innerHTML + ('<p>swipeDown: ' + e.dy + '</p>')
+        })
+        touch.on('swipeEnd', function() {
+            logDom.innerHTML = logDom.innerHTML + ('<p>swipeEnd </p>')
+        })
+    </script>
+</body>
+
+</html>
