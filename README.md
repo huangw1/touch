@@ -13,7 +13,7 @@
  * swipeleft：左划
  * swipeEnd：滑动结束
  * scale：缩放
- * scale：旋转
+ * rotate：旋转
 
 ##DEMO
 请使用移动设备或使用调试工具模拟移动设备查看。
