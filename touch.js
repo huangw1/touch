@@ -155,7 +155,7 @@
 				}
 
 				// 开启定时器
-				setTimeout(function() {
+				this.longTapTimer = setTimeout(function() {
 					this.emit('longTap', e)
 				}.bind(this), 800)
 
